@@ -248,7 +248,7 @@ async function seedDB() {
     dummyDepartmentsName,
   );
 
-  console.log(depResult && "[departments] column seeded");
+  console.log(depResult && "[departments] table seeded");
 
   const empPlaceholder = dummyEmployees
     .map((_, i) => {
@@ -269,7 +269,7 @@ async function seedDB() {
     empValues,
   );
 
-  console.log(empResult && "[employees] column seeded");
+  console.log(empResult && "[employees] table seeded");
 
   const spenPlaceholder = dummySpending
     .map((_, i) => {
@@ -291,7 +291,7 @@ async function seedDB() {
     spenValues,
   );
 
-  console.log(spenResult && "[spendings] column seeded");
+  console.log(spenResult && "[spendings] table seeded");
 
   db.end();
 }

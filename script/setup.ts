@@ -14,7 +14,7 @@ async function setupDB() {
     )`,
   );
 
-  console.log(depColStatus && "[departements] column created");
+  console.log(depColStatus && "[departements] table created");
 
   const empColStatus = await db.query(
     `CREATE TABLE employees (
@@ -24,7 +24,7 @@ async function setupDB() {
     )`,
   );
 
-  console.log(empColStatus && "[employeees] column created");
+  console.log(empColStatus && "[employeees] table created");
 
   const spenColStatus = await db.query(
     `CREATE TABLE spendings (
@@ -35,7 +35,7 @@ async function setupDB() {
     )`,
   );
 
-  console.log(spenColStatus && "[spendings] column created");
+  console.log(spenColStatus && "[spendings] table created");
 
   await db.end();
 }
