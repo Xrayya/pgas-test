@@ -1,25 +1,60 @@
-import { cn } from "#/lib/utils.ts"
-import { Button } from "#/components/ui/button.tsx"
+import { cn } from "#/lib/utils.ts";
+import { Button } from "#/components/ui/button.tsx";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "#/components/ui/card.tsx"
+} from "#/components/ui/card.tsx";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "#/components/ui/field.tsx"
-import { Input } from "#/components/ui/input.tsx"
+} from "#/components/ui/field.tsx";
+import { Input } from "#/components/ui/input.tsx";
+import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setPending(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = (await res.json().catch(() => null)) as any;
+
+      if (!res.ok || !data?.ok) {
+        setError(data?.error ?? "Login failed.");
+        return;
+      }
+
+      await navigate({ to: "/" });
+    } catch {
+      setError("Login failed.");
+    } finally {
+      setPending(false);
+    }
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -30,7 +65,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={onSubmit}>
             <FieldGroup>
               <Field>
                 <Button variant="outline" type="button">
@@ -62,6 +97,9 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.currentTarget.value)}
+                  autoComplete="email"
                 />
               </Field>
               <Field>
@@ -74,10 +112,28 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.currentTarget.value)}
+                  autoComplete="current-password"
+                />
               </Field>
+
+              {error ? (
+                <Field>
+                  <FieldDescription className="text-sm text-red-600">
+                    {error}
+                  </FieldDescription>
+                </Field>
+              ) : null}
+
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit" disabled={pending}>
+                  {pending ? "Logging in..." : "Login"}
+                </Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <a href="#">Sign up</a>
                 </FieldDescription>
@@ -91,5 +147,5 @@ export function LoginForm({
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
-  )
+  );
 }
