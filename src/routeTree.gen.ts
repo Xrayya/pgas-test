@@ -15,7 +15,8 @@ import { Route as EmployeesRouteImport } from './routes/employees'
 import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ReportsSpendingsRouteImport } from './routes/reports.spendings'
+import { Route as ReportsSpendingsRouteImport } from './routes/reports/spendings'
+import { Route as ReportsSpendingValueRangeRouteImport } from './routes/reports/spending-value-range'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as ApiSpendingsIndexRouteImport } from './routes/api/spendings/index'
 import { Route as ApiEmployeesIndexRouteImport } from './routes/api/employees/index'
@@ -24,11 +25,14 @@ import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as ApiSpendingsSpendingIdRouteImport } from './routes/api/spendings/$spendingId'
 import { Route as ApiReportsSpendingsRouteImport } from './routes/api/reports/spendings'
+import { Route as ApiReportsSpendingValueRangeRouteImport } from './routes/api/reports/spending-value-range'
 import { Route as ApiEmployeesEmployeeIdRouteImport } from './routes/api/employees/$employeeId'
 import { Route as ApiDepartmentsDepartmentIdRouteImport } from './routes/api/departments/$departmentId'
 import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
+import { Route as ApiReportsSpendingValueRangeXlsxRouteImport } from './routes/api/reports/spending-value-range.xlsx'
+import { Route as ApiReportsSpendingValueRangePdfRouteImport } from './routes/api/reports/spending-value-range.pdf'
 
 const SpendingsRoute = SpendingsRouteImport.update({
   id: '/spendings',
@@ -65,6 +69,12 @@ const ReportsSpendingsRoute = ReportsSpendingsRouteImport.update({
   path: '/reports/spendings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReportsSpendingValueRangeRoute =
+  ReportsSpendingValueRangeRouteImport.update({
+    id: '/reports/spending-value-range',
+    path: '/reports/spending-value-range',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   id: '/demo/tanstack-query',
   path: '/demo/tanstack-query',
@@ -105,6 +115,12 @@ const ApiReportsSpendingsRoute = ApiReportsSpendingsRouteImport.update({
   path: '/api/reports/spendings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiReportsSpendingValueRangeRoute =
+  ApiReportsSpendingValueRangeRouteImport.update({
+    id: '/api/reports/spending-value-range',
+    path: '/api/reports/spending-value-range',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiEmployeesEmployeeIdRoute = ApiEmployeesEmployeeIdRouteImport.update({
   id: '/api/employees/$employeeId',
   path: '/api/employees/$employeeId',
@@ -131,6 +147,18 @@ const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
   path: '/api/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiReportsSpendingValueRangeXlsxRoute =
+  ApiReportsSpendingValueRangeXlsxRouteImport.update({
+    id: '/xlsx',
+    path: '/xlsx',
+    getParentRoute: () => ApiReportsSpendingValueRangeRoute,
+  } as any)
+const ApiReportsSpendingValueRangePdfRoute =
+  ApiReportsSpendingValueRangePdfRouteImport.update({
+    id: '/pdf',
+    path: '/pdf',
+    getParentRoute: () => ApiReportsSpendingValueRangeRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -140,12 +168,14 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/spendings': typeof SpendingsRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/reports/spending-value-range': typeof ReportsSpendingValueRangeRoute
   '/reports/spendings': typeof ReportsSpendingsRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/departments/$departmentId': typeof ApiDepartmentsDepartmentIdRoute
   '/api/employees/$employeeId': typeof ApiEmployeesEmployeeIdRoute
+  '/api/reports/spending-value-range': typeof ApiReportsSpendingValueRangeRouteWithChildren
   '/api/reports/spendings': typeof ApiReportsSpendingsRoute
   '/api/spendings/$spendingId': typeof ApiSpendingsSpendingIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -153,6 +183,8 @@ export interface FileRoutesByFullPath {
   '/api/departments/': typeof ApiDepartmentsIndexRoute
   '/api/employees/': typeof ApiEmployeesIndexRoute
   '/api/spendings/': typeof ApiSpendingsIndexRoute
+  '/api/reports/spending-value-range/pdf': typeof ApiReportsSpendingValueRangePdfRoute
+  '/api/reports/spending-value-range/xlsx': typeof ApiReportsSpendingValueRangeXlsxRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -162,12 +194,14 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/spendings': typeof SpendingsRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/reports/spending-value-range': typeof ReportsSpendingValueRangeRoute
   '/reports/spendings': typeof ReportsSpendingsRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/departments/$departmentId': typeof ApiDepartmentsDepartmentIdRoute
   '/api/employees/$employeeId': typeof ApiEmployeesEmployeeIdRoute
+  '/api/reports/spending-value-range': typeof ApiReportsSpendingValueRangeRouteWithChildren
   '/api/reports/spendings': typeof ApiReportsSpendingsRoute
   '/api/spendings/$spendingId': typeof ApiSpendingsSpendingIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -175,6 +209,8 @@ export interface FileRoutesByTo {
   '/api/departments': typeof ApiDepartmentsIndexRoute
   '/api/employees': typeof ApiEmployeesIndexRoute
   '/api/spendings': typeof ApiSpendingsIndexRoute
+  '/api/reports/spending-value-range/pdf': typeof ApiReportsSpendingValueRangePdfRoute
+  '/api/reports/spending-value-range/xlsx': typeof ApiReportsSpendingValueRangeXlsxRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -185,12 +221,14 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/spendings': typeof SpendingsRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/reports/spending-value-range': typeof ReportsSpendingValueRangeRoute
   '/reports/spendings': typeof ReportsSpendingsRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/departments/$departmentId': typeof ApiDepartmentsDepartmentIdRoute
   '/api/employees/$employeeId': typeof ApiEmployeesEmployeeIdRoute
+  '/api/reports/spending-value-range': typeof ApiReportsSpendingValueRangeRouteWithChildren
   '/api/reports/spendings': typeof ApiReportsSpendingsRoute
   '/api/spendings/$spendingId': typeof ApiSpendingsSpendingIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -198,6 +236,8 @@ export interface FileRoutesById {
   '/api/departments/': typeof ApiDepartmentsIndexRoute
   '/api/employees/': typeof ApiEmployeesIndexRoute
   '/api/spendings/': typeof ApiSpendingsIndexRoute
+  '/api/reports/spending-value-range/pdf': typeof ApiReportsSpendingValueRangePdfRoute
+  '/api/reports/spending-value-range/xlsx': typeof ApiReportsSpendingValueRangeXlsxRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -209,12 +249,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/spendings'
     | '/demo/tanstack-query'
+    | '/reports/spending-value-range'
     | '/reports/spendings'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/departments/$departmentId'
     | '/api/employees/$employeeId'
+    | '/api/reports/spending-value-range'
     | '/api/reports/spendings'
     | '/api/spendings/$spendingId'
     | '/demo/form/address'
@@ -222,6 +264,8 @@ export interface FileRouteTypes {
     | '/api/departments/'
     | '/api/employees/'
     | '/api/spendings/'
+    | '/api/reports/spending-value-range/pdf'
+    | '/api/reports/spending-value-range/xlsx'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -231,12 +275,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/spendings'
     | '/demo/tanstack-query'
+    | '/reports/spending-value-range'
     | '/reports/spendings'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/departments/$departmentId'
     | '/api/employees/$employeeId'
+    | '/api/reports/spending-value-range'
     | '/api/reports/spendings'
     | '/api/spendings/$spendingId'
     | '/demo/form/address'
@@ -244,6 +290,8 @@ export interface FileRouteTypes {
     | '/api/departments'
     | '/api/employees'
     | '/api/spendings'
+    | '/api/reports/spending-value-range/pdf'
+    | '/api/reports/spending-value-range/xlsx'
   id:
     | '__root__'
     | '/'
@@ -253,12 +301,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/spendings'
     | '/demo/tanstack-query'
+    | '/reports/spending-value-range'
     | '/reports/spendings'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/departments/$departmentId'
     | '/api/employees/$employeeId'
+    | '/api/reports/spending-value-range'
     | '/api/reports/spendings'
     | '/api/spendings/$spendingId'
     | '/demo/form/address'
@@ -266,6 +316,8 @@ export interface FileRouteTypes {
     | '/api/departments/'
     | '/api/employees/'
     | '/api/spendings/'
+    | '/api/reports/spending-value-range/pdf'
+    | '/api/reports/spending-value-range/xlsx'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -276,12 +328,14 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SpendingsRoute: typeof SpendingsRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  ReportsSpendingValueRangeRoute: typeof ReportsSpendingValueRangeRoute
   ReportsSpendingsRoute: typeof ReportsSpendingsRoute
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthMeRoute: typeof ApiAuthMeRoute
   ApiDepartmentsDepartmentIdRoute: typeof ApiDepartmentsDepartmentIdRoute
   ApiEmployeesEmployeeIdRoute: typeof ApiEmployeesEmployeeIdRoute
+  ApiReportsSpendingValueRangeRoute: typeof ApiReportsSpendingValueRangeRouteWithChildren
   ApiReportsSpendingsRoute: typeof ApiReportsSpendingsRoute
   ApiSpendingsSpendingIdRoute: typeof ApiSpendingsSpendingIdRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
@@ -342,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportsSpendingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reports/spending-value-range': {
+      id: '/reports/spending-value-range'
+      path: '/reports/spending-value-range'
+      fullPath: '/reports/spending-value-range'
+      preLoaderRoute: typeof ReportsSpendingValueRangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/tanstack-query': {
       id: '/demo/tanstack-query'
       path: '/demo/tanstack-query'
@@ -398,6 +459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiReportsSpendingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/reports/spending-value-range': {
+      id: '/api/reports/spending-value-range'
+      path: '/api/reports/spending-value-range'
+      fullPath: '/api/reports/spending-value-range'
+      preLoaderRoute: typeof ApiReportsSpendingValueRangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/employees/$employeeId': {
       id: '/api/employees/$employeeId'
       path: '/api/employees/$employeeId'
@@ -433,8 +501,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/reports/spending-value-range/xlsx': {
+      id: '/api/reports/spending-value-range/xlsx'
+      path: '/xlsx'
+      fullPath: '/api/reports/spending-value-range/xlsx'
+      preLoaderRoute: typeof ApiReportsSpendingValueRangeXlsxRouteImport
+      parentRoute: typeof ApiReportsSpendingValueRangeRoute
+    }
+    '/api/reports/spending-value-range/pdf': {
+      id: '/api/reports/spending-value-range/pdf'
+      path: '/pdf'
+      fullPath: '/api/reports/spending-value-range/pdf'
+      preLoaderRoute: typeof ApiReportsSpendingValueRangePdfRouteImport
+      parentRoute: typeof ApiReportsSpendingValueRangeRoute
+    }
   }
 }
+
+interface ApiReportsSpendingValueRangeRouteChildren {
+  ApiReportsSpendingValueRangePdfRoute: typeof ApiReportsSpendingValueRangePdfRoute
+  ApiReportsSpendingValueRangeXlsxRoute: typeof ApiReportsSpendingValueRangeXlsxRoute
+}
+
+const ApiReportsSpendingValueRangeRouteChildren: ApiReportsSpendingValueRangeRouteChildren =
+  {
+    ApiReportsSpendingValueRangePdfRoute: ApiReportsSpendingValueRangePdfRoute,
+    ApiReportsSpendingValueRangeXlsxRoute:
+      ApiReportsSpendingValueRangeXlsxRoute,
+  }
+
+const ApiReportsSpendingValueRangeRouteWithChildren =
+  ApiReportsSpendingValueRangeRoute._addFileChildren(
+    ApiReportsSpendingValueRangeRouteChildren,
+  )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -444,12 +543,15 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SpendingsRoute: SpendingsRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  ReportsSpendingValueRangeRoute: ReportsSpendingValueRangeRoute,
   ReportsSpendingsRoute: ReportsSpendingsRoute,
   ApiAuthLoginRoute: ApiAuthLoginRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthMeRoute: ApiAuthMeRoute,
   ApiDepartmentsDepartmentIdRoute: ApiDepartmentsDepartmentIdRoute,
   ApiEmployeesEmployeeIdRoute: ApiEmployeesEmployeeIdRoute,
+  ApiReportsSpendingValueRangeRoute:
+    ApiReportsSpendingValueRangeRouteWithChildren,
   ApiReportsSpendingsRoute: ApiReportsSpendingsRoute,
   ApiSpendingsSpendingIdRoute: ApiSpendingsSpendingIdRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
