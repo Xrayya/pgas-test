@@ -1,3 +1,4 @@
+import { hashPassword } from "#/auth/password";
 import db from "#/db/db";
 
 const dummyDepartmentsName: string[] = [
@@ -243,8 +244,7 @@ async function seedDB() {
 
   const depResult = await db.query(
     `INSERT INTO departments(department_name)
-    VALUES ${depPlaceholder}
-    `,
+    VALUES ${depPlaceholder}`,
     dummyDepartmentsName,
   );
 
@@ -264,8 +264,7 @@ async function seedDB() {
 
   const empResult = await db.query(
     `INSERT INTO employees(employee_name, department_id)
-    VALUES ${empPlaceholder}
-    `,
+    VALUES ${empPlaceholder}`,
     empValues,
   );
 
@@ -286,12 +285,29 @@ async function seedDB() {
 
   const spenResult = await db.query(
     `INSERT INTO spendings(employee_id, spending_date, value)
-    VALUES ${spenPlaceholder}
-    `,
+    VALUES ${spenPlaceholder}`,
     spenValues,
   );
 
   console.log(spenResult && "[spendings] table seeded");
+
+  const hasedPasswordUser = await hashPassword("rahasia01");
+  const hasedPasswordAdmin = await hashPassword("rahasia02");
+
+  const userResult = await db.query(
+    `INSERT INTO users(email, password_hash, role)
+    VALUES ($1, $2, $3), ($4, $5, $6)`,
+    [
+      "user@example.com",
+      hasedPasswordUser,
+      "user",
+      "admin@example.com",
+      hasedPasswordAdmin,
+      "admin",
+    ],
+  );
+
+  console.log(userResult && "[users] table seeded");
 
   db.end();
 }
