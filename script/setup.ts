@@ -7,16 +7,16 @@ async function setupDB() {
 
   console.log(`Connection found: ${connStatus.rows[0].version}`);
 
-  const depColStatus = await db.query(
+  const depTblStatus = await db.query(
     `CREATE TABLE departments (
         department_id SERIAL PRIMARY KEY,
         department_name VARCHAR(100)
     )`,
   );
 
-  console.log(depColStatus && "[departements] table created");
+  console.log(depTblStatus && "[departements] table created");
 
-  const empColStatus = await db.query(
+  const empTblStatus = await db.query(
     `CREATE TABLE employees (
         employee_id SERIAL PRIMARY KEY,
         employee_name VARCHAR(100),
@@ -24,9 +24,9 @@ async function setupDB() {
     )`,
   );
 
-  console.log(empColStatus && "[employeees] table created");
+  console.log(empTblStatus && "[employeees] table created");
 
-  const spenColStatus = await db.query(
+  const spenTblStatus = await db.query(
     `CREATE TABLE spendings (
         spending_id SERIAL PRIMARY KEY,
         employee_id INT REFERENCES employees(employee_id),
@@ -35,7 +35,30 @@ async function setupDB() {
     )`,
   );
 
-  console.log(spenColStatus && "[spendings] table created");
+  console.log(spenTblStatus && "[spendings] table created");
+
+  const userTblStatus = await db.query(
+    `CREATE TABLE users (
+        user_id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        role VARCHAR(10) NOT NULL CHECK (role IN ('admin', 'user')),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )`,
+  );
+
+  console.log(userTblStatus && "[users] table created");
+
+  const sessionTblStatus = await db.query(
+    `CREATE TABLE sessions (
+          session_id UUID PRIMARY KEY,
+          user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+          expires_at TIMESTAMPTZ NOT NULL,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )`,
+  );
+
+  console.log(sessionTblStatus && "[sessions] table created");
 
   await db.end();
 }
