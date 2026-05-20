@@ -17,7 +17,7 @@ async function setupDB() {
   console.log(depColStatus && "[departements] column created");
 
   const empColStatus = await db.query(
-    `CREATE TABLE employeees (
+    `CREATE TABLE employees (
         employee_id SERIAL PRIMARY KEY,
         employee_name VARCHAR(100),
         department_id INT REFERENCES departments(department_id)
@@ -28,9 +28,10 @@ async function setupDB() {
 
   const spenColStatus = await db.query(
     `CREATE TABLE spendings (
-          spending_id SERIAL PRIMARY KEY,
-          employee_nane VARCHAR(100),
-          department_id SERIAL REFERENCES departments(department_id)
+      spending_id SERIAL PRIMARY KEY,
+      employee_id INT REFERENCES employees(employee_id),
+      spending_date DATE,
+      value DECIMAL(12, 2)
     )`,
   );
 
