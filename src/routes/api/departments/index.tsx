@@ -8,10 +8,16 @@ export const Route = createFileRoute("/api/departments/")({
       GET: async ({ request }) => {
         await requireUser(request);
 
+        const url = new URL(request.url);
+        const raw = url.searchParams.get("search");
+        const search = raw?.trim() ? `%${raw.trim()}%` : null;
+
         const { rows } = await db.query(
           `SELECT department_id, department_name
            FROM departments
+           WHERE ($1::text IS NULL OR department_name ILIKE $1)
            ORDER BY department_id DESC`,
+          [search],
         );
 
         return Response.json({ ok: true, data: rows });
@@ -26,7 +32,10 @@ export const Route = createFileRoute("/api/departments/")({
 
         const name = body?.department_name?.trim();
         if (!name) {
-          return Response.json({ ok: false, error: "department_name is required" }, { status: 400 });
+          return Response.json(
+            { ok: false, error: "department_name is required" },
+            { status: 400 },
+          );
         }
 
         const { rows } = await db.query(

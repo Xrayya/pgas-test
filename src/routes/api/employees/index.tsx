@@ -8,6 +8,10 @@ export const Route = createFileRoute("/api/employees/")({
       GET: async ({ request }) => {
         await requireUser(request);
 
+        const url = new URL(request.url);
+        const raw = url.searchParams.get("search");
+        const search = raw?.trim() ? `%${raw.trim()}%` : null;
+
         const { rows } = await db.query(
           `SELECT
              e.employee_id,
@@ -16,7 +20,9 @@ export const Route = createFileRoute("/api/employees/")({
              d.department_name
            FROM employees e
            LEFT JOIN departments d ON d.department_id = e.department_id
+           WHERE ($1::text IS NULL OR e.employee_name ILIKE $1)
            ORDER BY e.employee_id DESC`,
+          [search],
         );
 
         return Response.json({ ok: true, data: rows });

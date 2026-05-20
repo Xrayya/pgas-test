@@ -22,12 +22,17 @@ async function fetchMe(): Promise<MeResponse> {
   return res.json();
 }
 
-async function fetchDepartments(): Promise<DepartmentsResponse> {
-  const res = await fetch("/api/departments");
+async function fetchDepartments(search: string): Promise<DepartmentsResponse> {
+  const url = new URL("/api/departments", window.location.origin);
+  if (search.trim()) url.searchParams.set("search", search.trim());
+  const res = await fetch(url.toString(), { method: "GET" });
   return res.json();
 }
 
 function DepartmentsPage() {
+  const [searchInput, setSearchInput] = React.useState("");
+  const [search, setSearch] = React.useState("");
+
   const qc = useQueryClient();
 
   const meQuery = useQuery({
@@ -36,8 +41,8 @@ function DepartmentsPage() {
   });
 
   const departmentsQuery = useQuery({
-    queryKey: ["departments"],
-    queryFn: fetchDepartments,
+    queryKey: ["departments", { search }],
+    queryFn: () => fetchDepartments(search),
   });
 
   const me = meQuery.data?.user ?? null;
@@ -147,6 +152,37 @@ function DepartmentsPage() {
             disabled={createMutation.isPending}
           >
             {createMutation.isPending ? "Creating..." : "Create"}
+          </button>
+        </form>
+
+        <form
+          className="mt-4 flex flex-wrap gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setSearch(searchInput);
+          }}
+        >
+          <input
+            className="min-w-64 rounded-lg border border-(--line) bg-white/50 px-3 py-2 text-sm"
+            placeholder="Search department name..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.currentTarget.value)}
+          />
+          <button
+            className="rounded-lg border border-(--line) px-4 py-2 text-sm font-semibold"
+            type="submit"
+          >
+            Search
+          </button>
+          <button
+            className="rounded-lg border border-(--line) px-4 py-2 text-sm"
+            type="button"
+            onClick={() => {
+              setSearchInput("");
+              setSearch("");
+            }}
+          >
+            Reset
           </button>
         </form>
 

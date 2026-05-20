@@ -4,7 +4,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 type MeResponse =
   | { ok: true; user: null }
-  | { ok: true; user: { user_id: number; email: string; role: "admin" | "user" } };
+  | {
+    ok: true;
+    user: { user_id: number; email: string; role: "admin" | "user" };
+  };
 
 type Department = { department_id: number; department_name: string };
 
@@ -24,17 +27,26 @@ async function fetchMe(): Promise<MeResponse> {
   return res.json();
 }
 
-async function fetchDepartments(): Promise<{ ok: true; data: Department[] } | { ok: false; error: string }> {
+async function fetchDepartments(): Promise<
+  { ok: true; data: Department[] } | { ok: false; error: string }
+> {
   const res = await fetch("/api/departments");
   return res.json();
 }
 
-async function fetchEmployees(): Promise<{ ok: true; data: Employee[] } | { ok: false; error: string }> {
-  const res = await fetch("/api/employees");
+async function fetchEmployees(
+  search: string,
+): Promise<{ ok: true; data: Employee[] } | { ok: false; error: string }> {
+  const url = new URL("/api/employees", window.location.origin);
+  if (search.trim()) url.searchParams.set("search", search.trim());
+  const res = await fetch(url.toString());
   return res.json();
 }
 
 function EmployeesPage() {
+  const [searchInput, setSearchInput] = React.useState("");
+  const [search, setSearch] = React.useState("");
+
   const qc = useQueryClient();
 
   const meQuery = useQuery({ queryKey: ["me"], queryFn: fetchMe });
@@ -47,15 +59,18 @@ function EmployeesPage() {
   });
 
   const employeesQuery = useQuery({
-    queryKey: ["employees"],
-    queryFn: fetchEmployees,
+    queryKey: ["employees", { search }],
+    queryFn: () => fetchEmployees(search),
   });
 
   const [newEmployeeName, setNewEmployeeName] = React.useState("");
   const [newDepartmentId, setNewDepartmentId] = React.useState<number | "">("");
 
   const createMutation = useMutation({
-    mutationFn: async (vars: { employee_name: string; department_id: number }) => {
+    mutationFn: async (vars: {
+      employee_name: string;
+      department_id: number;
+    }) => {
       const res = await fetch("/api/employees", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -73,11 +88,18 @@ function EmployeesPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (vars: { employee_id: number; employee_name: string; department_id: number }) => {
+    mutationFn: async (vars: {
+      employee_id: number;
+      employee_name: string;
+      department_id: number;
+    }) => {
       const res = await fetch(`/api/employees/${vars.employee_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ employee_name: vars.employee_name, department_id: vars.department_id }),
+        body: JSON.stringify({
+          employee_name: vars.employee_name,
+          department_id: vars.department_id,
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data?.ok) throw new Error(data?.error ?? "Update failed");
@@ -90,7 +112,9 @@ function EmployeesPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (employee_id: number) => {
-      const res = await fetch(`/api/employees/${employee_id}`, { method: "DELETE" });
+      const res = await fetch(`/api/employees/${employee_id}`, {
+        method: "DELETE",
+      });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data?.ok) throw new Error(data?.error ?? "Delete failed");
       return data;
@@ -100,7 +124,8 @@ function EmployeesPage() {
     },
   });
 
-  if (meQuery.isLoading) return <main className="page-wrap px-4 pb-8 pt-14">Loading...</main>;
+  if (meQuery.isLoading)
+    return <main className="page-wrap px-4 pb-8 pt-14">Loading...</main>;
 
   if (!me) {
     return (
@@ -118,10 +143,14 @@ function EmployeesPage() {
   }
 
   const departments =
-    departmentsQuery.data && "data" in departmentsQuery.data ? departmentsQuery.data.data : [];
+    departmentsQuery.data && "data" in departmentsQuery.data
+      ? departmentsQuery.data.data
+      : [];
 
   const employees =
-    employeesQuery.data && "data" in employeesQuery.data ? employeesQuery.data.data : [];
+    employeesQuery.data && "data" in employeesQuery.data
+      ? employeesQuery.data.data
+      : [];
 
   return (
     <main className="page-wrap px-4 pb-8 pt-14">
@@ -153,7 +182,13 @@ function EmployeesPage() {
           <select
             className="rounded-lg border border-(--line) bg-white/50 px-3 py-2 text-sm"
             value={newDepartmentId}
-            onChange={(e) => setNewDepartmentId(e.currentTarget.value === "" ? "" : Number(e.currentTarget.value))}
+            onChange={(e) =>
+              setNewDepartmentId(
+                e.currentTarget.value === ""
+                  ? ""
+                  : Number(e.currentTarget.value),
+              )
+            }
             required
           >
             <option value="" disabled>
@@ -175,13 +210,48 @@ function EmployeesPage() {
           </button>
         </form>
 
+        <form
+          className="mt-4 flex flex-wrap gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setSearch(searchInput);
+          }}
+        >
+          <input
+            className="min-w-64 rounded-lg border border-(--line) bg-white/50 px-3 py-2 text-sm"
+            placeholder="Search employee name..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.currentTarget.value)}
+          />
+          <button
+            className="rounded-lg border border-(--line) px-4 py-2 text-sm font-semibold"
+            type="submit"
+          >
+            Search
+          </button>
+          <button
+            className="rounded-lg border border-(--line) px-4 py-2 text-sm"
+            type="button"
+            onClick={() => {
+              setSearchInput("");
+              setSearch("");
+            }}
+          >
+            Reset
+          </button>
+        </form>
+
         <div className="mt-6 overflow-x-auto">
           <table className="w-full min-w-180 border-collapse text-sm">
             <thead>
               <tr className="text-left">
                 <th className="border-b border-(--line) py-2 pr-2">ID</th>
-                <th className="border-b border-(--line) py-2 pr-2">Employee Name</th>
-                <th className="border-b border-(--line) py-2 pr-2">Department</th>
+                <th className="border-b border-(--line) py-2 pr-2">
+                  Employee Name
+                </th>
+                <th className="border-b border-(--line) py-2 pr-2">
+                  Department
+                </th>
                 <th className="border-b border-(--line) py-2 pr-2">Actions</th>
               </tr>
             </thead>
@@ -195,14 +265,18 @@ function EmployeesPage() {
                   pending={updateMutation.isPending || deleteMutation.isPending}
                   onUpdate={(vars) => {
                     if (!isAdmin) {
-                      alert("Akses ditolak: Hanya Admin yang dapat melakukan aksi ini.");
+                      alert(
+                        "Akses ditolak: Hanya Admin yang dapat melakukan aksi ini.",
+                      );
                       return;
                     }
                     updateMutation.mutate(vars);
                   }}
                   onDelete={() => {
                     if (!isAdmin) {
-                      alert("Akses ditolak: Hanya Admin yang dapat melakukan aksi ini.");
+                      alert(
+                        "Akses ditolak: Hanya Admin yang dapat melakukan aksi ini.",
+                      );
                       return;
                     }
                     deleteMutation.mutate(e.employee_id);
@@ -229,7 +303,11 @@ function EmployeeRow({
   departments: Department[];
   isAdmin: boolean;
   pending: boolean;
-  onUpdate: (vars: { employee_id: number; employee_name: string; department_id: number }) => void;
+  onUpdate: (vars: {
+    employee_id: number;
+    employee_name: string;
+    department_id: number;
+  }) => void;
   onDelete: () => void;
 }) {
   const [name, setName] = React.useState(employee.employee_name);
@@ -239,7 +317,9 @@ function EmployeeRow({
 
   return (
     <tr>
-      <td className="border-b border-(--line) py-2 pr-2">{employee.employee_id}</td>
+      <td className="border-b border-(--line) py-2 pr-2">
+        {employee.employee_id}
+      </td>
       <td className="border-b border-(--line) py-2 pr-2">
         <input
           className="w-full rounded-lg border border-(--line) bg-white/50 px-2 py-1"
