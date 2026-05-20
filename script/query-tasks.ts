@@ -1,8 +1,6 @@
 import db from "#/db/db";
 
 async function queryTasksAnswer() {
-  db.connect();
-
   console.log("Task 1: Menampilkan seluruh data pada masing-masing tabel.");
 
   const res1 = (await db.query(`SELECT * FROM departments`)).rows;
@@ -64,8 +62,6 @@ async function queryTasksAnswer() {
   ).rows;
 
   console.log(res6);
-
-  db.end();
 }
 
 queryTasksAnswer();

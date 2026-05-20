@@ -234,7 +234,6 @@ const dummySpending: {
   ];
 
 async function seedDB() {
-  db.connect();
 
   const depPlaceholder = dummyDepartmentsName
     .map((_, i) => {
@@ -308,8 +307,6 @@ async function seedDB() {
   );
 
   console.log(userResult && "[users] table seeded");
-
-  db.end();
 }
 
 seedDB();

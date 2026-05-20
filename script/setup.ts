@@ -1,8 +1,6 @@
 import db from "#/db/db";
 
 async function setupDB() {
-  await db.connect();
-
   const connStatus = await db.query("SELECT VERSION()");
 
   console.log(`Connection found: ${connStatus.rows[0].version}`);
@@ -59,8 +57,6 @@ async function setupDB() {
   );
 
   console.log(sessionTblStatus && "[sessions] table created");
-
-  await db.end();
 }
 
 setupDB();
