@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "deploy": "bun run build && wrangler deploy",
-    "db-setup": "bun run ./script/setup.ts"
+    "db-setup": "bun run ./script/setup.ts && bun run ./script/seed.ts"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",
