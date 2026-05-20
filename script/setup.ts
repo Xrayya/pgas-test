@@ -28,10 +28,10 @@ async function setupDB() {
 
   const spenColStatus = await db.query(
     `CREATE TABLE spendings (
-      spending_id SERIAL PRIMARY KEY,
-      employee_id INT REFERENCES employees(employee_id),
-      spending_date DATE,
-      value DECIMAL(12, 2)
+        spending_id SERIAL PRIMARY KEY,
+        employee_id INT REFERENCES employees(employee_id),
+        spending_date DATE,
+        value DECIMAL(12, 2)
     )`,
   );
 
