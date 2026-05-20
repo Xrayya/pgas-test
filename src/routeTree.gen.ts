@@ -10,17 +10,26 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
+import { Route as ApiDepartmentsIndexRouteImport } from './routes/api/departments/index'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
+import { Route as ApiDepartmentsDepartmentIdRouteImport } from './routes/api/departments/$departmentId'
+import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DepartmentsRoute = DepartmentsRouteImport.update({
+  id: '/departments',
+  path: '/departments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -38,6 +47,11 @@ const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   path: '/demo/tanstack-query',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDepartmentsIndexRoute = ApiDepartmentsIndexRouteImport.update({
+  id: '/api/departments/',
+  path: '/api/departments/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoFormSimpleRoute = DemoFormSimpleRouteImport.update({
   id: '/demo/form/simple',
   path: '/demo/form/simple',
@@ -46,6 +60,17 @@ const DemoFormSimpleRoute = DemoFormSimpleRouteImport.update({
 const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
   id: '/demo/form/address',
   path: '/demo/form/address',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDepartmentsDepartmentIdRoute =
+  ApiDepartmentsDepartmentIdRouteImport.update({
+    id: '/api/departments/$departmentId',
+    path: '/api/departments/$departmentId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiAuthMeRoute = ApiAuthMeRouteImport.update({
+  id: '/api/auth/me',
+  path: '/api/auth/me',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
@@ -62,76 +87,104 @@ const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
+  '/api/departments/$departmentId': typeof ApiDepartmentsDepartmentIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
+  '/api/departments/': typeof ApiDepartmentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
+  '/api/departments/$departmentId': typeof ApiDepartmentsDepartmentIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
+  '/api/departments': typeof ApiDepartmentsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
+  '/api/departments/$departmentId': typeof ApiDepartmentsDepartmentIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
+  '/api/departments/': typeof ApiDepartmentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/departments'
     | '/login'
     | '/demo/tanstack-query'
     | '/api/auth/login'
     | '/api/auth/logout'
+    | '/api/auth/me'
+    | '/api/departments/$departmentId'
     | '/demo/form/address'
     | '/demo/form/simple'
+    | '/api/departments/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/departments'
     | '/login'
     | '/demo/tanstack-query'
     | '/api/auth/login'
     | '/api/auth/logout'
+    | '/api/auth/me'
+    | '/api/departments/$departmentId'
     | '/demo/form/address'
     | '/demo/form/simple'
+    | '/api/departments'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/departments'
     | '/login'
     | '/demo/tanstack-query'
     | '/api/auth/login'
     | '/api/auth/logout'
+    | '/api/auth/me'
+    | '/api/departments/$departmentId'
     | '/demo/form/address'
     | '/demo/form/simple'
+    | '/api/departments/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  DepartmentsRoute: typeof DepartmentsRoute
   LoginRoute: typeof LoginRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
+  ApiAuthMeRoute: typeof ApiAuthMeRoute
+  ApiDepartmentsDepartmentIdRoute: typeof ApiDepartmentsDepartmentIdRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
+  ApiDepartmentsIndexRoute: typeof ApiDepartmentsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -141,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/departments': {
+      id: '/departments'
+      path: '/departments'
+      fullPath: '/departments'
+      preLoaderRoute: typeof DepartmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -164,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoTanstackQueryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/departments/': {
+      id: '/api/departments/'
+      path: '/api/departments'
+      fullPath: '/api/departments/'
+      preLoaderRoute: typeof ApiDepartmentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/form/simple': {
       id: '/demo/form/simple'
       path: '/demo/form/simple'
@@ -176,6 +243,20 @@ declare module '@tanstack/react-router' {
       path: '/demo/form/address'
       fullPath: '/demo/form/address'
       preLoaderRoute: typeof DemoFormAddressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/departments/$departmentId': {
+      id: '/api/departments/$departmentId'
+      path: '/api/departments/$departmentId'
+      fullPath: '/api/departments/$departmentId'
+      preLoaderRoute: typeof ApiDepartmentsDepartmentIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/me': {
+      id: '/api/auth/me'
+      path: '/api/auth/me'
+      fullPath: '/api/auth/me'
+      preLoaderRoute: typeof ApiAuthMeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/logout': {
@@ -198,12 +279,16 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  DepartmentsRoute: DepartmentsRoute,
   LoginRoute: LoginRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   ApiAuthLoginRoute: ApiAuthLoginRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
+  ApiAuthMeRoute: ApiAuthMeRoute,
+  ApiDepartmentsDepartmentIdRoute: ApiDepartmentsDepartmentIdRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
   DemoFormSimpleRoute: DemoFormSimpleRoute,
+  ApiDepartmentsIndexRoute: ApiDepartmentsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

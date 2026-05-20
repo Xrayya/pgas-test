@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import db from "#/db/db";
-import { requireUser } from "#/server/auth";
+import { requireUser } from "#/auth/role";
 
 export const Route = createFileRoute("/api/departments/")({
   server: {
