@@ -1,215 +1,214 @@
-Welcome to your new TanStack Start app! 
+# PGAS Test — Departments, Employees, Spendings (PostgreSQL + TanStack)
 
-# Getting Started
+This repository is a small CRUD + reporting app built for the PGAS technical test.
 
-To run this application:
+It covers:
+
+- Authentication + role-based access (Admin/User)
+- CRUD for **Departments**, **Employees**, and **Spendings**
+- Reporting pages (joined table, value-range report)
+- Export report data to **Excel (.xlsx)** and **PDF**
+
+---
+
+## Tech stack (high level)
+
+- **Frontend/Routes:** TanStack Router
+- **Data fetching:** TanStack Query
+- **Backend:** server routes in the same codebase (TanStack Router server handlers)
+- **Database:** PostgreSQL
+- **Excel export:** `exceljs`
+- **PDF export:** `pdfkit`
+
+---
+
+## Prerequisites
+
+- Bun for the runtime. Any runtime will do, but this project specifically use Bun from start to finish. Also, the script (inside `/script`) utilize Bun's ability to execute TypeScript directly. If you use other runtime, you might need to edit `package.json` and install some kind of adapter to execute .ts file.
+- PostgreSQL (local or remote)
+- A database user with permission to create tables / run SQL scripts
+
+---
+
+## Setup
+
+### 1) Install dependencies
 
 ```bash
 bun install
-bun --bun run dev
 ```
 
-# Building For Production
+### 2) Configure environment variables
 
-To build this application for production:
+Create a `.env` file (or copy from `.env.example` if provided) and fill in the DB connection.
+
+Typical variables (adjust to your project):
+
+- `DATABASE_URL=postgres://USER:PASSWORD@HOST:5432/DBNAME`
+
+> Note: the exact env var name depends on `#/db/db` implementation.
+
+### 3) Initialize database
+
+Run the SQL scripts (tables + seed) provided in the repo.
 
 ```bash
-bun --bun run build
+bun run db-setup
 ```
 
-## Testing
-
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+### 4) Run the app
 
 ```bash
-bun --bun run test
+bun run dev
 ```
 
-## Styling
+Open the app in your browser (check terminal output for the URL).
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+---
 
-### Removing Tailwind CSS
+## Test accounts
 
-If you prefer not to use Tailwind CSS:
+If seed data is included, use the accounts below.
 
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `bun install @tailwindcss/vite tailwindcss -D`
+- **Admin**
+  - email: `admin@example.com`
+  - password: `rahasia02`
 
+- **User**
+  - email: `user@example.com`
+  - password: `rahasia01`
 
-## Deploy to Cloudflare Workers
+> If your seed uses different accounts, update this section accordingly.
 
-This project uses the Cloudflare Vite plugin (configured in `vite.config.ts`) and `wrangler.jsonc`:
+---
 
-1. Install Wrangler: `npm install -g wrangler`
-2. Authenticate: `wrangler login`
-3. Deploy: `npx wrangler deploy`
+# Task answers / Implementation notes (for PT PGAS)
 
-For production env vars, run `wrangler secret put MY_VAR` for each secret listed in `.env.example`. Public (non-secret) vars go in `wrangler.jsonc` under `vars`.
+This section maps the features in this repo to the test requirements.
 
-KV, D1, R2, and Durable Object bindings are configured in `wrangler.jsonc` — see https://developers.cloudflare.com/workers/wrangler/configuration/.
+## 1) Authentication + roles
 
+- Endpoint used by UI: `/api/auth/me`
+- UI routes require login; unauthenticated users are redirected / shown a login message.
+- `requireUser()` is used on server handlers to protect API routes.
+- Role-based restrictions are applied for operations that require admin privileges.
 
-## Shadcn
+## 2) CRUD (bare query)
 
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
+CRUD features are implemented for:
 
-```bash
-pnpm dlx shadcn@latest add button
-```
+- Departments
+- Employees
+- Spendings
 
+Database operations are done using **raw SQL** via `db.query(...)` with parameters (no ORM helpers for CRUD logic).
 
+## 3) Search (triggered by button/Enter)
 
-## Routing
+To reduce unnecessary requests, search is implemented as "commit search":
 
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
+- User types into input (local state)
+- Search is applied only when pressing **Search** or **Enter**
 
-### Adding A Route
+Search endpoints:
 
-To add a new route to your application just add a new file in the `./src/routes` directory.
+- `/api/departments?search=...` (ILIKE)
+- `/api/employees?search=...` (ILIKE)
 
-TanStack will automatically generate the content of the route file for you.
+## 4) Joined spendings report (sorted by spending value ascending)
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+Report page:
 
-### Adding Links
+- `/reports/spendings`
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+API:
 
-```tsx
-import { Link } from "@tanstack/react-router";
-```
+- `/api/reports/spendings?sortBy=value&sortDir=asc`
 
-Then anywhere in your JSX you can use it like so:
+This shows spendings with joined information:
 
-```tsx
-<Link to="/about">About</Link>
-```
+- employee name
+- department name
+- spending date
+- spending value
 
-This will create a link that will navigate to the `/about` route.
+Sorting is handled by the query (server-side).
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+## 5) Spending report (2020–2025, filter by month range + value range)
 
-### Using A Layout
+Report page:
 
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
+- `/reports/spending-value-range`
 
-Here is an example layout that includes a header:
+API:
 
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+- `/api/reports/spending-value-range?fromMonth=YYYY-MM&toMonth=YYYY-MM&min=&max=`
 
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
+The report returns:
 
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
+- Columns: **date** and **value**
+- Period is limited to **2020-01 .. 2025-12** (as required)
+- Filters:
+  - month range (fromMonth/toMonth)
+  - value range (min/max)
 
-## Server Functions
+The SQL uses:
 
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
+- `spending_date >= fromDate AND spending_date < toDateExclusive`
+- `value >= min` and `value <= max` (when provided)
 
-```tsx
-import { createServerFn } from '@tanstack/react-start'
+## 6) Export features (Excel + PDF)
 
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
+Exports match **exactly what is on** the `/reports/spending-value-range` page with current filters.
 
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
+### Excel export
 
-## API Routes
+- Endpoint: `/api/reports/spending-value-range.xlsx`
+- Output: `.xlsx` file with columns **Date** and **Value**
 
-You can create API routes by using the `server` property in your route definitions:
+### PDF export
 
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
+- Endpoint: `/api/reports/spending-value-range/pdf`
+- Output: simple table PDF (Date, Value)
 
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
+---
 
-## Data Fetching
+## Useful routes summary
 
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
+- CRUD pages:
+  - `/departments`
+  - `/employees`
+  - `/spendings`
 
-For example:
+- Reports:
+  - `/reports/spendings` (joined report)
+  - `/reports/spending-value-range` (Ranged filter report)
 
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
+- Export:
+  - `/api/reports/spending-value-range/xlsx`
+  - `/api/reports/spending-value-range/pdf`
 
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
+---
 
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
+## Notes / Checklist
 
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
+- [x] Bare query used for DB operations (`db.query` with params)
+- [x] Alerts/confirmations for update/delete (UI)
+- [x] Join table sorted ascending by spending value (server-side)
+- [x] Report covers 2020–2025 and filter works (month range + min/max)
+- [x] Excel export works
+- [x] PDF export works
 
-# Demo files
+---
 
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
+## Screenshots
 
-# Learn More
+Screenshot of query executions and their result store in:
 
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+- `screenshots/`
 
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+---
+
+## License
+
+Apache-2.0
