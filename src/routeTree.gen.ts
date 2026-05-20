@@ -15,6 +15,7 @@ import { Route as EmployeesRouteImport } from './routes/employees'
 import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReportsSpendingsRouteImport } from './routes/reports.spendings'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as ApiSpendingsIndexRouteImport } from './routes/api/spendings/index'
 import { Route as ApiEmployeesIndexRouteImport } from './routes/api/employees/index'
@@ -22,6 +23,7 @@ import { Route as ApiDepartmentsIndexRouteImport } from './routes/api/department
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as ApiSpendingsSpendingIdRouteImport } from './routes/api/spendings/$spendingId'
+import { Route as ApiReportsSpendingsRouteImport } from './routes/api/reports/spendings'
 import { Route as ApiEmployeesEmployeeIdRouteImport } from './routes/api/employees/$employeeId'
 import { Route as ApiDepartmentsDepartmentIdRouteImport } from './routes/api/departments/$departmentId'
 import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
@@ -56,6 +58,11 @@ const AboutRoute = AboutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsSpendingsRoute = ReportsSpendingsRouteImport.update({
+  id: '/reports/spendings',
+  path: '/reports/spendings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
@@ -93,6 +100,11 @@ const ApiSpendingsSpendingIdRoute = ApiSpendingsSpendingIdRouteImport.update({
   path: '/api/spendings/$spendingId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiReportsSpendingsRoute = ApiReportsSpendingsRouteImport.update({
+  id: '/api/reports/spendings',
+  path: '/api/reports/spendings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiEmployeesEmployeeIdRoute = ApiEmployeesEmployeeIdRouteImport.update({
   id: '/api/employees/$employeeId',
   path: '/api/employees/$employeeId',
@@ -128,11 +140,13 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/spendings': typeof SpendingsRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/reports/spendings': typeof ReportsSpendingsRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/departments/$departmentId': typeof ApiDepartmentsDepartmentIdRoute
   '/api/employees/$employeeId': typeof ApiEmployeesEmployeeIdRoute
+  '/api/reports/spendings': typeof ApiReportsSpendingsRoute
   '/api/spendings/$spendingId': typeof ApiSpendingsSpendingIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
@@ -148,11 +162,13 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/spendings': typeof SpendingsRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/reports/spendings': typeof ReportsSpendingsRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/departments/$departmentId': typeof ApiDepartmentsDepartmentIdRoute
   '/api/employees/$employeeId': typeof ApiEmployeesEmployeeIdRoute
+  '/api/reports/spendings': typeof ApiReportsSpendingsRoute
   '/api/spendings/$spendingId': typeof ApiSpendingsSpendingIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
@@ -169,11 +185,13 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/spendings': typeof SpendingsRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/reports/spendings': typeof ReportsSpendingsRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/departments/$departmentId': typeof ApiDepartmentsDepartmentIdRoute
   '/api/employees/$employeeId': typeof ApiEmployeesEmployeeIdRoute
+  '/api/reports/spendings': typeof ApiReportsSpendingsRoute
   '/api/spendings/$spendingId': typeof ApiSpendingsSpendingIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
@@ -191,11 +209,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/spendings'
     | '/demo/tanstack-query'
+    | '/reports/spendings'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/departments/$departmentId'
     | '/api/employees/$employeeId'
+    | '/api/reports/spendings'
     | '/api/spendings/$spendingId'
     | '/demo/form/address'
     | '/demo/form/simple'
@@ -211,11 +231,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/spendings'
     | '/demo/tanstack-query'
+    | '/reports/spendings'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/departments/$departmentId'
     | '/api/employees/$employeeId'
+    | '/api/reports/spendings'
     | '/api/spendings/$spendingId'
     | '/demo/form/address'
     | '/demo/form/simple'
@@ -231,11 +253,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/spendings'
     | '/demo/tanstack-query'
+    | '/reports/spendings'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/departments/$departmentId'
     | '/api/employees/$employeeId'
+    | '/api/reports/spendings'
     | '/api/spendings/$spendingId'
     | '/demo/form/address'
     | '/demo/form/simple'
@@ -252,11 +276,13 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SpendingsRoute: typeof SpendingsRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  ReportsSpendingsRoute: typeof ReportsSpendingsRoute
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthMeRoute: typeof ApiAuthMeRoute
   ApiDepartmentsDepartmentIdRoute: typeof ApiDepartmentsDepartmentIdRoute
   ApiEmployeesEmployeeIdRoute: typeof ApiEmployeesEmployeeIdRoute
+  ApiReportsSpendingsRoute: typeof ApiReportsSpendingsRoute
   ApiSpendingsSpendingIdRoute: typeof ApiSpendingsSpendingIdRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
@@ -309,6 +335,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reports/spendings': {
+      id: '/reports/spendings'
+      path: '/reports/spendings'
+      fullPath: '/reports/spendings'
+      preLoaderRoute: typeof ReportsSpendingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/tanstack-query': {
       id: '/demo/tanstack-query'
       path: '/demo/tanstack-query'
@@ -358,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSpendingsSpendingIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/reports/spendings': {
+      id: '/api/reports/spendings'
+      path: '/api/reports/spendings'
+      fullPath: '/api/reports/spendings'
+      preLoaderRoute: typeof ApiReportsSpendingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/employees/$employeeId': {
       id: '/api/employees/$employeeId'
       path: '/api/employees/$employeeId'
@@ -404,11 +444,13 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SpendingsRoute: SpendingsRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  ReportsSpendingsRoute: ReportsSpendingsRoute,
   ApiAuthLoginRoute: ApiAuthLoginRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthMeRoute: ApiAuthMeRoute,
   ApiDepartmentsDepartmentIdRoute: ApiDepartmentsDepartmentIdRoute,
   ApiEmployeesEmployeeIdRoute: ApiEmployeesEmployeeIdRoute,
+  ApiReportsSpendingsRoute: ApiReportsSpendingsRoute,
   ApiSpendingsSpendingIdRoute: ApiSpendingsSpendingIdRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
   DemoFormSimpleRoute: DemoFormSimpleRoute,
