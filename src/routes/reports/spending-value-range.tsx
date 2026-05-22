@@ -318,6 +318,25 @@ function SpendingValueRangeReportPage() {
               >
                 Download Excel
               </button>
+              <button
+                className="rounded-lg border border-(--line) px-4 py-2 text-sm"
+                type="button"
+                onClick={() => {
+                  const url = new URL(
+                    "/api/reports/spending-value-range/pdf",
+                    window.location.origin,
+                  );
+                  url.searchParams.set("fromMonth", filters.fromMonth);
+                  url.searchParams.set("toMonth", filters.toMonth);
+                  if (filters.min.trim())
+                    url.searchParams.set("min", filters.min.trim());
+                  if (filters.max.trim())
+                    url.searchParams.set("max", filters.max.trim());
+                  window.location.href = url.toString();
+                }}
+              >
+                Download PDF
+              </button>
             </div>
 
             <div className="mt-3 overflow-x-auto">
